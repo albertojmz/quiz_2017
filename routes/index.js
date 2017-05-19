@@ -35,6 +35,11 @@ router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
 // Pagina de ayuda
 router.get('/help', function(req, res, next) {
     res.render('help');
+})
+
+// Pagina de jugar
+router.get('/help', function(req, res, next) {
+    res.render('randomplay');
 });
 
 module.exports = router;
