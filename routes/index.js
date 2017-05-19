@@ -38,8 +38,8 @@ router.get('/help', function(req, res, next) {
 })
 
 // Pagina de jugar
-router.get('/help', function(req, res, next) {
-    res.render('randomplay');
+router.get('/quizzes/randomplay', function(req, res, next) {
+    res.render('quizzes/random_play');
 });
 
 module.exports = router;
