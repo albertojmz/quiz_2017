@@ -3,8 +3,11 @@ var Sequelize = require('sequelize');
 
 var paginate = require('../helpers/paginate').paginate;
 
+score = 0;
+
 // Autoload el quiz asociado a :quizId
 exports.load = function (req, res, next, quizId) {
+
 
     models.Quiz.findById(quizId)
     .then(function (quiz) {
@@ -167,6 +170,7 @@ exports.play = function (req, res, next) {
 
     var answer = req.query.answer || '';
 
+
     res.render('quizzes/play', {
         quiz: req.quiz,
         answer: answer
@@ -187,3 +191,51 @@ exports.check = function (req, res, next) {
         answer: answer
     });
 };
+
+// GET /quizzes/randomplay
+exports.randomplay = function (req, res, next) {
+
+    var answer = req.query.answer || '';
+
+
+    var quiz = models.Quiz.build(
+        question = 'Hola',
+        id = '1'
+    )
+
+    res.render('quizzes/random_play', {
+                quiz: quiz,
+              answer: answer
+           });
+
+    // var quizId = Number(req.params.quizId);
+    //
+    // var quiz = models.Quiz.findById('1');
+    // if (quiz) {
+    //     res.render('quizzes/random_play', {
+    //         quiz: quiz,
+    //         answer: answer
+    //     });
+    // } else {
+    //     next(new Error('No existe ningún quiz con id= ' + quizId))
+    // }
+};
+
+// GET /quizzes/randomcheck/:quizId
+exports.randomcheck = function (req, res, next) {
+
+
+    var answer = req.query.answer || "";
+
+    var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+
+    if (result){score++;}
+
+
+    res.render('quizzes/random_result', {
+        quiz: req.quiz,
+        result: result,
+        answer: answer
+    });
+};
+
