@@ -1,9 +1,9 @@
 var models = require("../models");
 var Sequelize = require('sequelize');
-
+var session = require('express-session');
 var paginate = require('../helpers/paginate').paginate;
 
-score = 0;
+
 
 // Autoload el quiz asociado a :quizId
 exports.load = function (req, res, next, quizId) {
@@ -197,28 +197,42 @@ exports.randomplay = function (req, res, next) {
 
     var answer = req.query.answer || '';
 
+    if (!req.session.score) req.session.score=0;
+    // // quiz = models.Quiz.findOne();
+    // var quiz = models.Quiz.build({
+    //     question: 'Capital de Italia',
+    //     id : 1
+    // });
 
-    var quiz = models.Quiz.build(
-        question = 'Hola',
-        id = '1'
-    )
 
-    res.render('quizzes/random_play', {
-                quiz: quiz,
-              answer: answer
-           });
+        var tabla = models.Quiz.findAll()
+            .then(function (tabla) {
+                res.render('quizzes/random_play', {
+                    score : req.session.score,
+                    answer: answer,
+                    quiz: tabla[parseInt(Math.random()*tabla.length)]
+                });
 
-    // var quizId = Number(req.params.quizId);
-    //
-    // var quiz = models.Quiz.findById('1');
-    // if (quiz) {
+            })
+
+
+
+
+
+    // var quiz = models.Quiz.findOne()
+    // .then(function(quiz)  {
     //     res.render('quizzes/random_play', {
     //         quiz: quiz,
     //         answer: answer
-    //     });
-    // } else {
-    //     next(new Error('No existe ningún quiz con id= ' + quizId))
-    // }
+    // //     });
+    //
+    // })
+    // res.render('quizzes/random_play', {
+    //             quiz: quiz,
+    //           answer: answer
+    //        });
+
+
 };
 
 // GET /quizzes/randomcheck/:quizId
@@ -229,13 +243,22 @@ exports.randomcheck = function (req, res, next) {
 
     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
 
-    if (result){score++;}
+
+        if (result){
+            req.session.score++;
+            //tabla.destroy(req.quiz);
+        }
 
 
-    res.render('quizzes/random_result', {
-        quiz: req.quiz,
-        result: result,
-        answer: answer
-    });
+        res.render('quizzes/random_result', {
+            score: req.session.score,
+            quiz: req.quiz,
+            result: result,
+            answer: answer
+        });
+
+
+
+
 };
 
