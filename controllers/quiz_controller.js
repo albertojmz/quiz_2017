@@ -203,17 +203,28 @@ exports.randomplay = function (req, res, next) {
     //     question: 'Capital de Italia',
     //     id : 1
     // });
+    if (!req.session.fallo) req.session.fallo=0;
+    if(req.session.fallo ===1){req.session.score=0;}
+    if (!req.session.array) {
 
-
-        var tabla = models.Quiz.findAll()
+            tabla = models.Quiz.findAll()
             .then(function (tabla) {
+                if (req.session.score === tabla.length){
+                    res.render('quizzes/random_nomore' ,{
+                        score: req.session.score
+                    })
+                }
                 res.render('quizzes/random_play', {
+
                     score : req.session.score,
                     answer: answer,
                     quiz: tabla[parseInt(Math.random()*tabla.length)]
                 });
 
             })
+        req.session.array = tabla;
+    }
+
 
 
 
@@ -244,9 +255,15 @@ exports.randomcheck = function (req, res, next) {
     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
 
 
+
         if (result){
             req.session.score++;
-            //tabla.destroy(req.quiz);
+            req.session.fallo=0;
+            delete(tabla[(req.quiz.id)-1])
+        }
+
+        if(!result){
+            req.session.fallo=1;
         }
 
 
@@ -256,6 +273,8 @@ exports.randomcheck = function (req, res, next) {
             result: result,
             answer: answer
         });
+
+
 
 
 
