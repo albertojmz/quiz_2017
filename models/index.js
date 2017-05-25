@@ -7,7 +7,7 @@ var Sequelize = require('sequelize');
 //  DATABASE_URL = sqlite:///
 //    DATABASE_STORAGE = quiz.sqlite
 // Para usar en Heroku BBDD Postgres:
-//    DATABASE_URL = postgres://user:passwd@host:port/database
+//DATABASE_URL = "postgres://ydvqdpbdcfptqc:d5e8cf42a48b3226612a3d09868d8a23ba9c460d29c1e6a653229fe397e32c4c@ec2-54-225-242-74.compute-1.amazonaws.com:5432/d1a24chqdidg6b";
 
 var url, storage;
 
