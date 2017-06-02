@@ -8,17 +8,23 @@ var paginate = require('../helpers/paginate').paginate;
 // Autoload el quiz asociado a :quizId
 exports.load = function (req, res, next, quizId) {
 
-<<<<<<< HEAD
+
     models.Quiz.findById(quizId, {
         include: [
             models.Tip,
             {model: models.User, as: 'Author'}
         ]
     })
-=======
 
-    models.Quiz.findById(quizId)
->>>>>>> origin/practica52
+
+    models.Quiz.findById(quizId, {
+        include : [
+            {model: models.Tip, include : [{ model: models.User, as: 'Author'}]},
+            {model: models.User, as: 'Author'}
+
+        ]
+    })
+
     .then(function (quiz) {
         if (quiz) {
             req.quiz = quiz;
