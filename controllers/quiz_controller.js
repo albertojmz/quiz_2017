@@ -1,17 +1,24 @@
 var models = require("../models");
 var Sequelize = require('sequelize');
-
+var session = require('express-session');
 var paginate = require('../helpers/paginate').paginate;
+
+
 
 // Autoload el quiz asociado a :quizId
 exports.load = function (req, res, next, quizId) {
 
+<<<<<<< HEAD
     models.Quiz.findById(quizId, {
         include: [
             models.Tip,
             {model: models.User, as: 'Author'}
         ]
     })
+=======
+
+    models.Quiz.findById(quizId)
+>>>>>>> origin/practica52
     .then(function (quiz) {
         if (quiz) {
             req.quiz = quiz;
@@ -202,6 +209,7 @@ exports.play = function (req, res, next) {
 
     var answer = req.query.answer || '';
 
+
     res.render('quizzes/play', {
         quiz: req.quiz,
         answer: answer
@@ -222,3 +230,156 @@ exports.check = function (req, res, next) {
         answer: answer
     });
 };
+
+//GET /quizzes/randomplay
+exports.randomplay = function (req, res, next) {
+
+    if(!req.session.score || !req.session.answered_right) {
+        req.session.score = 0;
+        req.session.answered_right = [-1];}
+
+    var answer = req.query.answer || "";
+
+    if(!req.session.wrong){
+        req.session.wrong = 0;
+    }
+
+    if (req.session.wrong === 1) {
+        req.session.score = 0;
+    }
+
+    models.Quiz.count()
+        .then(function (count) {
+            return models.Quiz.findAll(
+                {where: {id: { $notIn: req.session.answered_right}}})
+        })
+
+        .then(function(not_answered){
+            if(not_answered.length == 0) {res.render('quizzes/random_nomore', {
+                score: req.session.score
+            });
+            } else{
+                var random = Math.floor(Math.random() * not_answered.length);
+                res.render('quizzes/random_play', {
+                    quiz: not_answered[random],
+                    answer: answer,
+                    score: req.session.score
+                });
+            }
+        })
+};
+
+
+// GET /quizzes/randomcheck/:quizId?answer=respuesta
+exports.randomcheck = function(req, res, next){
+
+    var answer = req.query.answer || "";
+
+    var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+
+    if(result) {
+        req.session.score++;
+        req.session.wrong = 0;
+        req.session.answered_right.push(req.quiz.id);
+    }
+    else {req.session.wrong = 1;
+    req.session.score = 0;}
+    res.render('quizzes/random_result', {
+        score: req.session.score,
+        result: result,
+        answer: answer
+    });
+};
+
+
+
+// // GET /quizzes/randomplay
+// exports.randomplay = function (req, res, next) {
+//
+//     var answer = req.query.answer || '';
+//
+//     if (!req.session.score) req.session.score=0;
+//     // // quiz = models.Quiz.findOne();
+//     // var quiz = models.Quiz.build({
+//     //     question: 'Capital de Italia',
+//     //     id : 1
+//     // });
+//     if (!req.session.fallo) req.session.fallo=0;
+//     if(req.session.fallo ===1){req.session.score=0;}
+//     // if (!req.session.array) {
+//     //         tabla = models.Quiz.findAll()
+//     //         .then(function (tabla) {
+//     //
+//     //             if (req.session.score === tabla.length){
+//     //                 res.render('quizzes/random_nomore' ,{
+//     //                     score: req.session.score
+//     //                 })
+//     //             }
+//     //             res.render('quizzes/random_play', {
+//     //
+//     //                 score : req.session.score,
+//     //                 answer: answer,
+//     //                 quiz: tabla[parseInt(Math.random()*tabla.length)]
+//     //             });
+//     //
+//     //         })
+//     //
+//     // }
+//     if (!req.session.preguntas) req.session.preguntas = models.Quiz.findAll();
+//     if (!req.session.array) req.session.array = [-1];
+//
+//     var numero = parseInt(Math.random()*5);
+//     quizelegido = models.Quiz.findById(numero)
+//         .then(function(quizelegido) {
+//
+//         })
+//         if (req.session.array.indexOf(quizelegido.id)===-1){
+//             res.render( 'quizzes/random_play' , {
+//                 score: req.session.score,
+//                 answer:answer,
+//                 quiz:quizelegido
+//             })
+//         }
+//         else {
+//
+//         }
+// };
+//
+// // GET /quizzes/randomcheck/:quizId
+// exports.randomcheck = function (req, res, next) {
+//
+//
+//     var answer = req.query.answer || "";
+//
+//     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+//
+//
+//
+//         if (result){
+//             req.session.score++;
+//             req.session.fallo=0;
+//             req.session.array.push(req.quiz.id);
+//         }
+//
+//         if(!result){
+//             req.session.fallo=1;
+//         }
+//
+//
+//         res.render('quizzes/random_result', {
+//             score: req.session.score,
+//             quiz: req.quiz,
+//             result: result,
+//             answer: answer
+//         });
+//
+//
+//
+//
+//
+//
+// };
+//
+//
+//
+
