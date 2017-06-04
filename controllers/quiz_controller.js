@@ -282,6 +282,10 @@ exports.randomcheck = function(req, res, next){
     var answer = req.query.answer || "";
 
     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+    if (!req.session.score || !req.session.answered_right){
+        req.session.score = 0;
+        req.session.answered_right = [-1];
+    }
 
     if(result) {
         req.session.score++;
