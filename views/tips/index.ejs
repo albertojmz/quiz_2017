@@ -13,7 +13,7 @@
 
         <li>
             <%= tip.text %>
-                <span id="autor"> <small> (by <%= quiz.Tips[i].Author.username  %>) </small></span>
+                 <small>(by <span id="autor"><%=quiz.Tips[i].Author.username%></span>)</small>
 
 
             <% if (!accepted && (isAdmin || isQuizAuthor || tip.AuthorId === session.user.id)) { %>
