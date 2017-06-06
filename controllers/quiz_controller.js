@@ -14,7 +14,7 @@ exports.load = function (req, res, next, quizId) {
             models.Tip,
             {model: models.User, as: 'Author'}
         ]
-    })
+    }) // realmente no hace nada
 
 
     models.Quiz.findById(quizId, {
